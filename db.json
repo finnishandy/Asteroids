@@ -1,0 +1,113 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "pwd": "secret",
+      "admin": true
+    },
+    {
+      "username": "test1",
+      "pwd": "secret"
+    },
+    {
+      "username": "test1",
+      "pwd": "secret"
+    },
+    {
+      "username": "test1",
+      "pwd": "secret"
+    }
+  ],
+  "asteroids": [
+    {
+      "name": "TUNGUSKA",
+      "remainder": 24
+    },
+    {
+      "name": "HOBA",
+      "remainder": 26
+    },
+    {
+      "name": "WILLAMETTE",
+      "remainder": 30
+    },
+    {
+      "name": "SIKHOTE",
+      "remainder": 42
+    },
+    {
+      "name": "SYLACAUGAHODGES",
+      "remainder": 13
+    },
+    {
+      "name": "ALH",
+      "remainder": 21
+    },
+    {
+      "name": "ORGUEIL",
+      "remainder": 42
+    },
+    {
+      "name": "PEEKSKILL",
+      "remainder": 10
+    },
+    {
+      "name": "MURCHISON",
+      "remainder": 30
+    },
+    {
+      "name": "ALLENDE",
+      "remainder": 8
+    },
+    {
+      "name": "B",
+      "remainder": 2
+    },
+    {
+      "name": "C",
+      "remainder": 3
+    }
+  ],
+  "groups": [
+    {
+      "name": "YELLOW",
+      "remainder": 2
+    },
+    {
+      "name": "GREEN",
+      "remainder": 4
+    },
+    {
+      "name": "ORANGE",
+      "remainder": 15
+    },
+    {
+      "name": "RED",
+      "remainder": 27
+    },
+    {
+      "name": "BLACK",
+      "remainder": 29
+    },
+    {
+      "name": "BLUE",
+      "remainder": 40
+    },
+    {
+      "name": "AJJ",
+      "remainder": 21
+    },
+    {
+      "remainder": 3,
+      "name": "TANGERINE"
+    }
+  ],
+  "undefined": [
+    {
+      "name": "ADD"
+    },
+    {
+      "name": "FOO"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+    <title>UFO and Asteroid Labor Party</title>
+    <style>
+        .asteroid, .group, .team { max-width: 200px; height: 25px; float: left; border: 1px solid red; margin: 20px; padding: 5px; cursor: pointer; }
+        .group { border: 1px solid green;}
+        .team { border: 1px solid blue;}
+        .selected { border-style: dashed }
+        #asteroids, #teams, #groups { border: 1px dashed black; }
+        .clearfix:after { visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;}
+        #admin { display: none}
+        #Error { color: red}
+        #pitch { display: none}
+        h3 { margin-bottom: 0px;}
+    </style>
+</head>
+<body>
+
+    <!--<a href="/">HOME</a>-->
+
+    <div id="Error"></div>
+
+    <div id="loginform">
+        <label for="username">Username:</label><input type="text" id="username"/><br/>
+        <label for="pwd">Password:</label><input type="password" id="pwd"/>
+        <input type="button" id="login" value="login"/>
+        <input type="button" id="register" value="register"/>
+    </div>
+
+    <div id="pitch">
+        <h3>Asteroids:</h3>
+        <div id="asteroids" class="clearfix"></div>
+        <h3>Teams:</h3>
+        <div id="teams" class="clearfix"></div>
+        <h3>Groups:</h3>
+        <div id="groups" class="clearfix"></div>
+    </div>
+
+    <div id="admin">
+        <label for="asteroidname">Add Asteroid:</label>
+            <input type="text" data-type="asteroids" id="asteroidname"  pattern="[A-Z]"/>
+            <input type="button" id="addasteroid" value="Add"/>
+            <input type="button" id="updateasteroid" value="Update"/>
+            <input type="button" id="deleteasteroid" value="Delete"/><br/>
+        <label for="groupname">Add Group:</label>
+            <input type="text" data-type="groups" id="groupname"/>
+            <input pattern="[A-Z]" type="button" id="addgroup" data-type="groups" value="Add"/>
+            <input type="button" id="updategroup" value="Update"/>
+            <input type="button" id="deletegroup" value="Delete"/><br/>
+    </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    var socket = io(),
+        data, selectedAsteroid, selectedGroup;
+
+    $('#login').click(function() {
+        socket.emit('login', {username: $('#username').val(), pwd: $('#pwd').val()});
+    });
+
+    $('#register').click(function() {
+        socket.emit('register', {username: $('#username').val(), pwd: $('#pwd').val()});
+    });
+
+    $("#addasteroid, #addgroup").click(function(e) {
+        //socket.emit('add asteroid', $("#asteroidname").val().toUpperCase());
+        var $el = $(e.currentTarget).prev(), type = $el.attr('data-type');
+        socket.emit('insert', {type: type, name: $el.val().toUpperCase()});
+    });
+
+    $("body").on('click', ".asteroid", function() {
+        $('#asteroids>.selected').removeClass("selected");
+        selectedAsteroid = $(this).text();
+        $('#asteroidname').val(selectedAsteroid);
+        $(this).addClass("selected");
+    });
+
+    $("body").on('click', ".group", function() {
+        $('#groups>.selected').removeClass("selected");
+        selectedGroup = $(this).text();
+        $('#groupname').val(selectedGroup);
+        $(this).addClass("selected");
+    });
+
+
+    $("#updateasteroid").click(function() {
+        socket.emit('update', { type: 'asteroids', old: selectedAsteroid, new: $("#asteroidname").val().toUpperCase() });
+    });
+
+    $("#deleteasteroid").click(function() {
+        socket.emit('remove', { type: 'asteroids', name: selectedAsteroid });
+    });
+
+    $("#updategroup").click(function() {
+        socket.emit('update', { type: 'groups', old: selectedGroup, new: $("#groupname").val().toUpperCase() });
+    });
+
+    $("#deletegroup").click(function() {
+        socket.emit('remove', { type: 'groups', name: selectedGroup });
+    });
+
+
+    socket.on('registration complete', function(msg){
+        console.log("registration complete");
+    });
+
+    socket.on('registration error', function(msg){
+        console.log("registration error");
+    });
+
+    socket.on('login complete', function(msg){
+        data = msg;
+        $('#pitch').show();
+        hideError();
+        $('#loginform').hide();
+        populate(msg);
+    });
+
+    socket.on('update asteroids', function(msg){
+        hideError();
+        $('#asteroids').empty();
+        populate(msg);
+    });
+
+    socket.on('update groups', function(msg){
+        hideError();
+        $('#groups').empty();
+        populate(msg);
+    });
+
+    socket.on('update', function(msg){
+        populate(msg);
+    });
+
+    socket.on('Error', function(msg){
+        $('#Error').empty().append(msg).show();
+    });
+
+    var hideError = function() {
+        $('#Error').empty().hide();
+    }
+
+    var populate = function(data) {
+        hideError();
+        $('#asteroids').empty();
+        $('#teams').empty();
+        $('#groups').empty();
+
+        data.asteroids.forEach(function(asteroid){
+            $('#asteroids').append("<div class='asteroid'>" + asteroid.name + "</div>");
+        });
+
+        data.groups.forEach(function(group){
+            $('#groups').append("<div class='group'>" + group.name + "</div>");
+        });
+
+        data.teams.forEach(function(team){
+            $('#teams').append("<div class='team'>" + team.group.name + ', ' + team.asteroid.name + "</div>");
+        });
+
+        if (data.admin) $('#admin').show();
+    }
+</script>
+
+</body>
+</html>
